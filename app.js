@@ -1,5 +1,5 @@
 const express = require("express");
-//const cors = require("cors");
+const cors = require("cors");
 
 const app = express();
 
@@ -7490,13 +7490,13 @@ var resList = {
   csrfToken: "iT2fNfCKJvBt-wuZpNF1XWs4ELdwkkQoLbiQYF0A",
 };
 
-// app.use(
-//   cors({
-//     //origin: "https://codeconnectclient.onrender.com",
-//     origin: "http://localhost:5173",
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    //origin: "https://codeconnectclient.onrender.com",
+    origin: "*",
+    credentials: true,
+  })
+);
 
 app.get("/api/restaurants/list", async (req, res) => {
   res.json({ resList });
