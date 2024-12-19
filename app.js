@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const { createProxyMiddleware } = require("http-proxy-middleware");
 
 const app = express();
 const resList = [
@@ -1899,6 +1900,25 @@ app.get("/api/restaurants/list", async (req, res) => {
   res.json({ resList });
 });
 
+app.use("/api/restaurants/:restId", (req, res, next) => {
+  const restaurantId = req.params.restId;
+
+  const proxy = createProxyMiddleware({
+    target: "https://www.swiggy.com",
+    changeOrigin: true,
+    pathRewrite: (path, req) => {
+      // Rewrite the path to include the dynamic restaurant ID
+      return `/dapi/menu/pl?page-type=REGULAR_MENU&complete-menu=true&lat=13.061832105089994&lng=77.62601659437385&restaurantId=${restaurantId}`;
+    },
+    onProxyReq: (proxyReq, req, res) => {
+      // Set custom headers if required
+      proxyReq.setHeader("Authorization", "Bearer YOUR_TOKEN");
+    },
+  });
+
+  proxy(req, res, next);
+});
+
 app.listen(process.env.PORT || 3000, () => {
-  console.log("Server is successfully listening on port 5000...");
+  console.log("Server is successfully listening on port 3000...");
 });
